@@ -26,16 +26,34 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         OAuth2User user = (OAuth2User) authentication.getPrincipal();
 
-        String email = user.getAttribute("email");
-        String name = user.getAttribute("name");
-
         String provider = request.getRequestURI().contains("github") ? "GITHUB" : "GOOGLE";
 
-        User dbUser = userRepository.findByEmail(email)
-                .orElseGet(() -> userRepository.save(new User(null, name, email, provider)));
+        String email;
+        String name;
+
+        if ("GITHUB".equals(provider)) {
+            String login = user.getAttribute("login");
+            email = login + "@github.local";
+            name = user.getAttribute("name");
+            if (name == null) name = login;
+        } else {
+            email = user.getAttribute("email");
+            name = user.getAttribute("name");
+            if (name == null) name = "Google User";
+        }
+
+        final String finalEmail = email;
+        final String finalName = name;
+        final String finalProvider = provider;
+
+        User dbUser = userRepository.findByEmail(finalEmail)
+                .orElseGet(() -> userRepository.save(
+                        new User(null, finalName, finalEmail, finalProvider)
+                ));
 
         String token = jwtService.generateToken(dbUser.getEmail());
 
+        response.setContentType("application/json");
         response.getWriter().write(token);
     }
 }

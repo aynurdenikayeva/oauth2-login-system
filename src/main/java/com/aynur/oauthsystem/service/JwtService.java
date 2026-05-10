@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-
 @Service
 public class JwtService {
 
@@ -16,7 +15,7 @@ public class JwtService {
     private String secret;
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String generateToken(String email) {
