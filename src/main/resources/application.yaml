@@ -1,25 +1,24 @@
 spring:
-
   security:
     oauth2:
       client:
         registration:
 
           google:
-            client-id: your-google-client-id
-            client-secret: your-google-client-secret
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope:
               - email
               - profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
 
           github:
-            client-id: your-github-client-id
-            client-secret: your-github-client-secret
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
             scope:
               - read:user
               - user:email
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://localhost:8080/login/oauth2/code/github"
 
         provider:
           github:
@@ -43,5 +42,5 @@ spring:
         format_sql: true
 
 jwt:
-  secret: mySuperSecretKey123456789
+  secret: ${JWT_SECRET}
   expiration: 86400000
